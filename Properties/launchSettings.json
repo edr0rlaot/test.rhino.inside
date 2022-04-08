@@ -1,7 +1,8 @@
 {
   "profiles": {
     "TestRhinoInside": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "\"\\path\\to\\archi.3dm\""
     }
   }
 }

@@ -18,14 +18,14 @@ namespace TestRhinoInside
         if (!obj.IsNormal)
           continue;
 
-        Console.WriteLine("[C#] {0} - {1} : {2}", ++count, obj.Id, obj.ObjectType.ToString());
+        Console.WriteLine("[x] object #{0} - {1} : {2}", ++count, obj.Id, obj.ObjectType.ToString());
 
         if (obj.ObjectType == ObjectType.Brep)
         {
           var brep = Rhino.Geometry.Brep.TryConvertBrep(obj.Geometry);
           if (brep != null)
           {
-            Console.WriteLine("[C#] converting brep to mesh...");
+            Console.WriteLine("   . converting brep to mesh...");
             var aggregate = new Rhino.Geometry.Mesh();
             aggregate.Append(Rhino.Geometry.Mesh.CreateFromBrep(brep, Rhino.Geometry.MeshingParameters.Default));
             mesh.Append(aggregate);
@@ -34,12 +34,12 @@ namespace TestRhinoInside
         }
         else if (obj.ObjectType == ObjectType.Mesh)
         {
-          Console.WriteLine("[C#] extracting mesh...");
+          Console.WriteLine("   . extracting mesh...");
           mesh.Append(obj.GetMeshes(MeshType.Any));
         }
       }
 
-      Console.WriteLine("[C#] found {0} objects, generated mesh", doc.Objects.Count);
+      Console.WriteLine("found {0} objects, generated mesh", doc.Objects.Count);
       return mesh;
     }
 
@@ -49,16 +49,15 @@ namespace TestRhinoInside
       {
         using (new RhinoCore(new string[] { "/NOSPLASH" }, WindowStyle.NoWindow))
         {
-          Console.WriteLine("[C#] opening file at " + path);
           var doc = RhinoDoc.Open(path, out bool wasAlreadyOpen);
           if (doc == null)
           {
-            Console.WriteLine("[C#] error, failed to load file");
-            return "'failed to load file'";
+            Console.WriteLine("error, failed to load file");
+            return "failed...";
           }
           else
           {
-            Console.WriteLine("[C#] file loaded successfully");
+            Console.WriteLine("file loaded successfully");
             var mesh = GetMesh(doc);
             doc.Dispose();
             return "done...";
@@ -67,7 +66,7 @@ namespace TestRhinoInside
       }
       catch (Exception ex)
       {
-        return "failed";
+        return "failed...";
       }
     }
 
@@ -79,7 +78,9 @@ namespace TestRhinoInside
       }
       else
       {
-        var result = OpenRhinoFile(args[0]);
+        var path = args[0];
+        Console.WriteLine("input file : {0}", path);
+        var result = OpenRhinoFile(path);
         Console.WriteLine(result);
       }
     }
