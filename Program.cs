@@ -1,48 +1,11 @@
 ﻿using System;
 using Rhino;
-using Rhino.DocObjects;
-using Rhino.Geometry;
 using Rhino.Runtime.InProcess;
 
 namespace TestRhinoInside
 {
   class Program
   {
-    static Rhino.Geometry.Mesh GetMesh(Rhino.RhinoDoc doc)
-    {
-      var mesh = new Rhino.Geometry.Mesh();
-
-      var count = 0;
-      foreach (var obj in doc.Objects)
-      {
-        if (!obj.IsNormal)
-          continue;
-
-        Console.WriteLine("[x] object #{0} - {1} : {2}", ++count, obj.Id, obj.ObjectType.ToString());
-
-        if (obj.ObjectType == ObjectType.Brep)
-        {
-          var brep = Rhino.Geometry.Brep.TryConvertBrep(obj.Geometry);
-          if (brep != null)
-          {
-            Console.WriteLine("   . converting brep to mesh...");
-            var aggregate = new Rhino.Geometry.Mesh();
-            aggregate.Append(Rhino.Geometry.Mesh.CreateFromBrep(brep, Rhino.Geometry.MeshingParameters.Default));
-            mesh.Append(aggregate);
-            brep.Dispose();
-          }
-        }
-        else if (obj.ObjectType == ObjectType.Mesh)
-        {
-          Console.WriteLine("   . extracting mesh...");
-          mesh.Append(obj.GetMeshes(MeshType.Any));
-        }
-      }
-
-      Console.WriteLine("found {0} objects, generated mesh", doc.Objects.Count);
-      return mesh;
-    }
-
     static string OpenRhinoFile(string path)
     {
       try
@@ -58,7 +21,7 @@ namespace TestRhinoInside
           else
           {
             Console.WriteLine("file loaded successfully");
-            var mesh = GetMesh(doc);
+            System.Threading.Thread.Sleep(2000);
             doc.Dispose();
             return "done...";
           }
@@ -66,7 +29,7 @@ namespace TestRhinoInside
       }
       catch (Exception ex)
       {
-        return "failed...";
+        return "failed: " + ex.Message;
       }
     }
 
