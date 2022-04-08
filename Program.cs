@@ -72,7 +72,7 @@ namespace TestRhinoInside
 
     static void Main(string[] args)
     {
-      if (args.Length > 1)
+      if (args.Length < 1)
       {
         Console.WriteLine("please, select a .3dm file...");
       }
